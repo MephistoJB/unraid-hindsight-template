@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>Hindsight</Name>
+  <Repository>ghcr.io/vectorize-io/hindsight:0.8.5@sha256:0710076cd1539b4f89537d2e5b0ea1e4d179885bc12809a56cf748c538c8c4fb</Repository>
+  <Registry>https://github.com/vectorize-io/hindsight/pkgs/container/hindsight</Registry>
+  <Network>bridge</Network>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/MephistoJB/unraid-hindsight-template/issues</Support>
+  <Project>https://github.com/vectorize-io/hindsight</Project>
+  <Overview>Authenticated Hindsight long-term memory service using external PostgreSQL and an Ollama-compatible local LLM.</Overview>
+  <Category>Tools: Other:</Category>
+  <WebUI>http://[IP]:[PORT:9999]</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/MephistoJB/unraid-hindsight-template/main/templates/hindsight.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/MephistoJB/unraid-hindsight-template/main/images/hindsight-icon.png</Icon>
+  <ExtraParams>--security-opt=no-new-privileges:true --cap-drop=ALL --pids-limit=512 --memory=4g --cpus=4</ExtraParams>
+  <PostArgs/>
+  <CPUset/>
+  <DateInstalled>0</DateInstalled>
+  <DonateText/>
+  <DonateLink/>
+  <Requires>PostgreSQL 15+ with vector and pg_trgm extensions; reachable Ollama-compatible endpoint.</Requires>
+  <Config Name="API Port" Target="8888" Default="8888" Mode="tcp" Description="Hindsight API port." Type="Port" Display="always" Required="true" Mask="false">8888</Config>
+  <Config Name="WebUI Port" Target="9999" Default="9999" Mode="tcp" Description="Hindsight Control Plane port." Type="Port" Display="always" Required="true" Mask="false">9999</Config>
+  <Config Name="Model Cache" Target="/home/hindsight/.cache" Default="/mnt/user/appdata/hindsight/cache" Mode="rw" Description="Persistent Hugging Face model cache." Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/hindsight/cache</Config>
+  <Config Name="Database URL" Target="HINDSIGHT_API_DATABASE_URL" Default="" Mode="" Description="PostgreSQL URL for a dedicated Hindsight database." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Database Schema" Target="HINDSIGHT_API_DATABASE_SCHEMA" Default="hindsight" Mode="" Description="Dedicated PostgreSQL schema." Type="Variable" Display="advanced" Required="true" Mask="false">hindsight</Config>
+  <Config Name="Run Migrations" Target="HINDSIGHT_API_RUN_MIGRATIONS_ON_STARTUP" Default="true" Mode="" Description="Run Hindsight database migrations at startup." Type="Variable" Display="advanced" Required="true" Mask="false">true</Config>
+  <Config Name="LLM Provider" Target="HINDSIGHT_API_LLM_PROVIDER" Default="ollama" Mode="" Description="OpenAI-compatible Ollama provider." Type="Variable" Display="always" Required="true" Mask="false">ollama</Config>
+  <Config Name="LLM Base URL" Target="HINDSIGHT_API_LLM_BASE_URL" Default="http://macserver:11434/v1" Mode="" Description="Macserver Ollama OpenAI-compatible endpoint." Type="Variable" Display="always" Required="true" Mask="false">http://macserver:11434/v1</Config>
+  <Config Name="LLM API Key" Target="HINDSIGHT_API_LLM_API_KEY" Default="not-needed" Mode="" Description="Required placeholder for Ollama." Type="Variable" Display="advanced" Required="true" Mask="true">not-needed</Config>
+  <Config Name="LLM Model" Target="HINDSIGHT_API_LLM_MODEL" Default="qwen3-coder:30b" Mode="" Description="Extraction and consolidation model." Type="Variable" Display="always" Required="true" Mask="false">qwen3-coder:30b</Config>
+  <Config Name="API Key" Target="HINDSIGHT_API_TENANT_API_KEY" Default="" Mode="" Description="Long random key required by Hindsight clients." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Tenant Extension" Target="HINDSIGHT_API_TENANT_EXTENSION" Default="hindsight_api.extensions.builtin.tenant:ApiKeyTenantExtension" Mode="" Description="Enables API-key authentication." Type="Variable" Display="advanced" Required="true" Mask="false">hindsight_api.extensions.builtin.tenant:ApiKeyTenantExtension</Config>
+  <Config Name="Control Plane API Key" Target="HINDSIGHT_CP_DATAPLANE_API_KEY" Default="" Mode="" Description="Must equal API Key." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="Control Plane Access Key" Target="HINDSIGHT_CP_ACCESS_KEY" Default="" Mode="" Description="Separate long random WebUI access key." Type="Variable" Display="always" Required="true" Mask="true"/>
+  <Config Name="MCP Enabled" Target="HINDSIGHT_API_MCP_ENABLED" Default="false" Mode="" Description="Keep the unaudited MCP surface disabled." Type="Variable" Display="advanced" Required="true" Mask="false">false</Config>
+  <Config Name="Observations Enabled" Target="HINDSIGHT_API_ENABLE_OBSERVATIONS" Default="false" Mode="" Description="Enable only after latency and quality tests." Type="Variable" Display="advanced" Required="true" Mask="false">false</Config>
+  <Config Name="Auto Consolidation Enabled" Target="HINDSIGHT_API_ENABLE_AUTO_CONSOLIDATION" Default="false" Mode="" Description="Enable only after latency and quality tests." Type="Variable" Display="advanced" Required="true" Mask="false">false</Config>
+  <Config Name="Observation History Enabled" Target="HINDSIGHT_API_ENABLE_OBSERVATION_HISTORY" Default="false" Mode="" Description="Avoid retaining observation revisions while observations are disabled." Type="Variable" Display="advanced" Required="true" Mask="false">false</Config>
+  <Config Name="Access Log" Target="HINDSIGHT_API_ACCESS_LOG" Default="false" Mode="" Description="Avoid logging memory request paths." Type="Variable" Display="advanced" Required="true" Mask="false">false</Config>
+  <Config Name="OTel Traces" Target="HINDSIGHT_API_OTEL_TRACES_ENABLED" Default="false" Mode="" Description="Disable outbound telemetry traces." Type="Variable" Display="advanced" Required="true" Mask="false">false</Config>
+  <Config Name="Embedding Model" Target="HINDSIGHT_API_EMBEDDINGS_LOCAL_MODEL" Default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2" Mode="" Description="Multilingual local embedding model." Type="Variable" Display="advanced" Required="true" Mask="false">sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2</Config>
+  <Config Name="Reranker Model" Target="HINDSIGHT_API_RERANKER_LOCAL_MODEL" Default="cross-encoder/mmarco-mMiniLMv2-L12-H384-v1" Mode="" Description="Multilingual local reranker." Type="Variable" Display="advanced" Required="true" Mask="false">cross-encoder/mmarco-mMiniLMv2-L12-H384-v1</Config>
+  <Config Name="Text Search Language" Target="HINDSIGHT_API_TEXT_SEARCH_EXTENSION_NATIVE_LANGUAGE" Default="german" Mode="" Description="PostgreSQL text search language." Type="Variable" Display="advanced" Required="true" Mask="false">german</Config>
+</Container>

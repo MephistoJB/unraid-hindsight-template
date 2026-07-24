@@ -1,0 +1,27 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install validation tools
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+      - name: Validate Unraid template
+        run: ./scripts/validate-template.sh
+      - name: Validate Compose
+        env:
+          HINDSIGHT_DB_NAME: hindsight
+          HINDSIGHT_DB_USER: hindsight
+          HINDSIGHT_DB_PASSWORD: validation-only
+          HINDSIGHT_API_KEY: validation-only-api
+          HINDSIGHT_CP_ACCESS_KEY: validation-only-ui
+        run: docker compose -f compose/compose.yaml config --quiet
+

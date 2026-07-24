@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+xml="$root/templates/hindsight.xml"
+compose="$root/compose/compose.yaml"
+
+if command -v xmllint >/dev/null 2>&1; then
+  xmllint --noout "$xml"
+else
+  python3 - "$xml" <<'PY'
+import sys
+import xml.etree.ElementTree as ET
+
+ET.parse(sys.argv[1])
+PY
+fi
+
+required=(
+  HINDSIGHT_API_DATABASE_URL
+  HINDSIGHT_API_TENANT_EXTENSION
+  HINDSIGHT_API_TENANT_API_KEY
+  HINDSIGHT_CP_DATAPLANE_API_KEY
+  HINDSIGHT_CP_ACCESS_KEY
+  HINDSIGHT_API_MCP_ENABLED
+  HINDSIGHT_API_OTEL_TRACES_ENABLED
+)
+
+for name in "${required[@]}"; do
+  grep -q "$name" "$xml"
+  grep -q "$name" "$compose"
+done
+
+if grep -R -nE '(:latest|Privileged>true|<Network>host|/var/run/docker.sock)' \
+  "$xml" "$compose"; then
+  echo "unsafe or mutable container configuration found" >&2
+  exit 1
+fi
+
+grep -q 'ghcr.io/vectorize-io/hindsight:0.8.5@sha256:' "$xml"
+grep -q 'ghcr.io/vectorize-io/hindsight:0.8.5@sha256:' "$compose"
+
+echo "template validation passed"
