@@ -4,9 +4,11 @@
   <Repository>ghcr.io/vectorize-io/hindsight:0.8.5@sha256:0710076cd1539b4f89537d2e5b0ea1e4d179885bc12809a56cf748c538c8c4fb</Repository>
   <Registry>https://github.com/vectorize-io/hindsight/pkgs/container/hindsight</Registry>
   <Network>bridge</Network>
+  <Shell>bash</Shell>
   <Privileged>false</Privileged>
   <Support>https://github.com/MephistoJB/unraid-hindsight-template/issues</Support>
   <Project>https://github.com/vectorize-io/hindsight</Project>
+  <ReadMe>https://github.com/MephistoJB/unraid-hindsight-template#readme</ReadMe>
   <Overview>Authenticated Hindsight long-term memory service using external PostgreSQL and an Ollama-compatible local LLM.</Overview>
   <Category>Tools: Other:</Category>
   <WebUI>http://[IP]:[PORT:9999]</WebUI>

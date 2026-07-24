@@ -3,16 +3,18 @@ set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 xml="$root/templates/hindsight.xml"
+profile="$root/ca_profile.xml"
 compose="$root/compose/compose.yaml"
 
 if command -v xmllint >/dev/null 2>&1; then
-  xmllint --noout "$xml"
+  xmllint --noout "$xml" "$profile"
 else
-  python3 - "$xml" <<'PY'
+  python3 - "$xml" "$profile" <<'PY'
 import sys
 import xml.etree.ElementTree as ET
 
-ET.parse(sys.argv[1])
+for path in sys.argv[1:]:
+    ET.parse(path)
 PY
 fi
 
