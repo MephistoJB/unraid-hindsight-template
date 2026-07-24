@@ -16,14 +16,19 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libxml2-utils
       - name: Validate Unraid template
         run: ./scripts/validate-template.sh
+      - name: Compile Hermes compatibility override
+        run: python3 -m py_compile overrides/hermes/plugins/memory/hindsight/__init__.py
       - name: Validate Compose
         env:
           HINDSIGHT_DB_NAME: hindsight
           HINDSIGHT_DB_USER: hindsight
           HINDSIGHT_DB_PASSWORD: validation-only
+          HINDSIGHT_DATABASE_URL: postgresql://hindsight:validation-only@host.docker.internal:5432/hindsight
           HINDSIGHT_API_KEY: validation-only-api
           HINDSIGHT_CP_ACCESS_KEY: validation-only-ui
-        run: docker compose -f compose/compose.yaml config --quiet
+        run: |
+          docker compose -f compose/compose.yaml config --quiet
+          docker compose -f compose/external-postgres.yaml config --quiet
       - name: Verify pinned Hindsight architectures
         run: |
           docker buildx imagetools inspect \

@@ -7,3 +7,6 @@
 - Add authenticated API and Control Plane defaults.
 - Add German multilingual embedding, reranking, and text-search defaults.
 - Add validation, smoke-test, deployment, security, Hermes, and rollback docs.
+- Add an external-PostgreSQL Compose variant for existing pgvector services.
+- Add a Hermes current-turn recall and score-filter compatibility override.
+- Document measured latency, privacy routing, persistence, and observation tests.

@@ -21,9 +21,11 @@ https://github.com/MephistoJB/unraid-hindsight-template
 ```
 
 The single-container template expects an existing PostgreSQL 15+ database with
-`vector` and `pg_trgm`. For a complete deployment, use
-[`compose/compose.yaml`](compose/compose.yaml), which includes a dedicated
-PostgreSQL 16/pgvector service.
+`vector` and `pg_trgm`. Use
+[`compose/external-postgres.yaml`](compose/external-postgres.yaml) with an
+existing database. For a self-contained deployment,
+[`compose/compose.yaml`](compose/compose.yaml) includes a dedicated PostgreSQL
+16/pgvector service.
 
 ## Required secrets
 
@@ -41,7 +43,8 @@ HINDSIGHT_API_KEY=... ./scripts/e2e-memory-test.sh
 ```
 
 See [deployment](docs/DEPLOYMENT.md), [security](docs/SECURITY.md),
-[Hermes integration](docs/HERMES.md), and [rollback](docs/ROLLBACK.md).
+[Hermes integration](docs/HERMES.md), [validation results](docs/VALIDATION.md),
+and [rollback](docs/ROLLBACK.md).
 
 ## Upstream pin
 

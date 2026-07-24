@@ -5,6 +5,8 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 xml="$root/templates/hindsight.xml"
 profile="$root/ca_profile.xml"
 compose="$root/compose/compose.yaml"
+external_compose="$root/compose/external-postgres.yaml"
+override="$root/overrides/hermes/plugins/memory/hindsight/__init__.py"
 
 if command -v xmllint >/dev/null 2>&1; then
   xmllint --noout "$xml" "$profile"
@@ -31,15 +33,18 @@ required=(
 for name in "${required[@]}"; do
   grep -q "$name" "$xml"
   grep -q "$name" "$compose"
+  grep -q "$name" "$external_compose"
 done
 
 if grep -R -nE '(:latest|Privileged>true|<Network>host|/var/run/docker.sock)' \
-  "$xml" "$compose"; then
+  "$xml" "$compose" "$external_compose"; then
   echo "unsafe or mutable container configuration found" >&2
   exit 1
 fi
 
 grep -q 'ghcr.io/vectorize-io/hindsight:0.8.5@sha256:' "$xml"
 grep -q 'ghcr.io/vectorize-io/hindsight:0.8.5@sha256:' "$compose"
+grep -q 'ghcr.io/vectorize-io/hindsight:0.8.5@sha256:' "$external_compose"
+python3 -m py_compile "$override"
 
 echo "template validation passed"
