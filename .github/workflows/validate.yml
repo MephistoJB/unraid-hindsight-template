@@ -24,4 +24,11 @@ jobs:
           HINDSIGHT_API_KEY: validation-only-api
           HINDSIGHT_CP_ACCESS_KEY: validation-only-ui
         run: docker compose -f compose/compose.yaml config --quiet
-
+      - name: Verify pinned Hindsight architectures
+        run: |
+          docker buildx imagetools inspect \
+            ghcr.io/vectorize-io/hindsight:0.8.5@sha256:0710076cd1539b4f89537d2e5b0ea1e4d179885bc12809a56cf748c538c8c4fb \
+            | grep -q 'linux/amd64'
+          docker buildx imagetools inspect \
+            ghcr.io/vectorize-io/hindsight:0.8.5@sha256:0710076cd1539b4f89537d2e5b0ea1e4d179885bc12809a56cf748c538c8c4fb \
+            | grep -q 'linux/arm64'

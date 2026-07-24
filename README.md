@@ -37,6 +37,7 @@ database password or access keys. `HINDSIGHT_API_KEY` and
 ```bash
 ./scripts/validate-template.sh
 docker compose --env-file .env -f compose/compose.yaml config --quiet
+HINDSIGHT_API_KEY=... ./scripts/e2e-memory-test.sh
 ```
 
 See [deployment](docs/DEPLOYMENT.md), [security](docs/SECURITY.md),
@@ -54,4 +55,3 @@ See [deployment](docs/DEPLOYMENT.md), [security](docs/SECURITY.md),
 The upstream release publishes keyless Cosign signatures. Its release workflow
 does not currently run the commented-out container smoke test, so this
 repository performs its own runtime checks before Hermes is switched.
-
