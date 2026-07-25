@@ -17,6 +17,7 @@ Use the built-in Hindsight provider in external mode:
   "auto_retain": true,
   "retain_async": true,
   "retain_every_n_turns": 1,
+  "retain_assistant_content": false,
   "memory_mode": "context"
 }
 ```

@@ -645,6 +645,7 @@ class HindsightMemoryProvider(MemoryProvider):
         self._retain_source = ""
         self._retain_user_prefix = "User"
         self._retain_assistant_prefix = "Assistant"
+        self._retain_assistant_content = False
         self._platform = ""
         self._user_id = ""
         self._user_name = ""
@@ -995,6 +996,7 @@ class HindsightMemoryProvider(MemoryProvider):
             {"key": "retain_source", "description": "Metadata source value attached to retained memories", "default": ""},
             {"key": "retain_user_prefix", "description": "Label used before user turns in retained transcripts", "default": "User"},
             {"key": "retain_assistant_prefix", "description": "Label used before assistant turns in retained transcripts", "default": "Assistant"},
+            {"key": "retain_assistant_content", "description": "Include assistant responses in retained transcripts. Keep disabled for user-profile memory so model claims cannot become user facts.", "default": False},
             {"key": "recall_tags", "description": "Tags to filter when searching memories (comma-separated)", "default": ""},
             {"key": "recall_tags_match", "description": "Tag matching mode for recall", "default": "any", "choices": ["any", "all", "any_strict", "all_strict"]},
             {"key": "recall_types", "description": "Fact types to surface on recall — applies to both auto-recall and the hindsight_recall tool (comma-separated or list). Defaults to observation-only — observations are Hindsight's consolidated, deduplicated, evidence-grounded knowledge layer; raw world/experience facts are the supporting evidence observations already summarize. Set to e.g. 'observation,world,experience' to also include raw facts.", "default": "observation"},
@@ -1331,6 +1333,9 @@ class HindsightMemoryProvider(MemoryProvider):
         self._retain_assistant_prefix = str(
             self._config.get("retain_assistant_prefix") or os.environ.get("HINDSIGHT_RETAIN_ASSISTANT_PREFIX", "Assistant")
         ).strip() or "Assistant"
+        self._retain_assistant_content = bool(
+            self._config.get("retain_assistant_content", False)
+        )
 
         # Retain controls
         self._auto_retain = self._config.get("auto_retain", True)
@@ -1667,18 +1672,20 @@ class HindsightMemoryProvider(MemoryProvider):
 
     def _build_turn_messages(self, user_content: str, assistant_content: str) -> List[Dict[str, str]]:
         now = datetime.now(timezone.utc).isoformat()
-        return [
+        messages = [
             {
                 "role": "user",
                 "content": f"{self._retain_user_prefix}: {user_content}",
                 "timestamp": now,
-            },
-            {
+            }
+        ]
+        if self._retain_assistant_content and assistant_content:
+            messages.append({
                 "role": "assistant",
                 "content": f"{self._retain_assistant_prefix}: {assistant_content}",
                 "timestamp": now,
-            },
-        ]
+            })
+        return messages
 
     def _build_metadata(self, *, message_count: int, turn_index: int) -> Dict[str, str]:
         metadata: Dict[str, str] = {

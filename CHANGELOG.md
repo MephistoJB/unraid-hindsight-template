@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Keep assistant responses out of user-profile retention by default so model
+  claims cannot be stored as user facts.
+- Add a focused regression test for user-only retention.
+
 ## 0.1.0 - 2026-07-24
 
 - Add digest-pinned Hindsight `0.8.5` Unraid template.
